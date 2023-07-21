@@ -42,14 +42,40 @@ namespace MusicApi.Controllers
 
         // PUT api/<SongsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(string id, [FromBody] Song songObj)
         {
+
+            Guid songId;
+            if (!Guid.TryParse(id, out songId))
+            {
+                // Handle invalid Guid format or error
+                // For example, you can return a BadRequest response here.
+                // return BadRequest("Invalid ID format.");
+                return;
+            }
+
+            var song = _dbContext.Songs.Find(songId);
+
+            song.Title = songObj.Title;
+            song.Language = songObj.Language;
+            _dbContext.SaveChanges();
         }
 
         // DELETE api/<SongsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(string id)
         {
+            Guid songId;
+            if (!Guid.TryParse(id, out songId))
+            {
+                // Handle invalid Guid format or error
+                // For example, you can return a BadRequest response here.
+                // return BadRequest("Invalid ID format.");
+                return;
+            }
+            var song = _dbContext.Songs.Find(songId);
+            _dbContext.Songs.Remove(song);
+            _dbContext.SaveChanges();
         }
     }
 }

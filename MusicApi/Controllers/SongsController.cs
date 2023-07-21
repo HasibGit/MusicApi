@@ -33,5 +33,12 @@ namespace MusicApi.Controllers
 
             songs[index] = song;
         }
+
+        [HttpDelete("{id}")]
+        public void delete(string id)
+        {
+            int index = songs.FindIndex(song => song.Id == id);
+            songs.RemoveAt(index);
+        }
     }
 }

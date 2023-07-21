@@ -25,5 +25,13 @@ namespace MusicApi.Controllers
         {
             songs.Add(song);
         }
+
+        [HttpPut("{id}")]
+        public void put(string id, [FromBody]Song song)
+        {
+            int index = songs.FindIndex(song => song.Id == id);
+
+            songs[index] = song;
+        }
     }
 }

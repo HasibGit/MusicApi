@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using MusicApi.Data;
 using MusicApi.Models;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MusicApi.Controllers
 {
@@ -8,37 +10,46 @@ namespace MusicApi.Controllers
     [ApiController]
     public class SongsController : ControllerBase
     {
-        private static List<Song> songs = new List<Song>()
+        private ApiDbContext _dbContext;
+        public SongsController(ApiDbContext _dbContext)
         {
-            new Song(){ Id = "gk123", Title = "Forever", Language = "English"},
-            new Song() { Id = "tv351", Title = "Someone Special", Language = "Korean" }
-        };
+            this._dbContext = _dbContext;
+        }
 
+        // GET: api/<SongsController>
         [HttpGet]
-        public IEnumerable<Song> get()
+        public IEnumerable<Song> Get()
         {
-            return songs;
+            return _dbContext.Songs;
         }
 
+        // GET api/<SongsController>/5
+        [HttpGet("{id}")]
+        public Song Get(string id)
+        {
+            Song song = _dbContext.Songs.Find(id);
+            return song;
+        }
+
+        // POST api/<SongsController>
         [HttpPost]
-        public void post([FromBody]Song song)
+        public void Post([FromBody] Song song)
         {
-            songs.Add(song);
+            song.Id = Guid.NewGuid();
+            _dbContext.Songs.Add(song);
+            _dbContext.SaveChanges();
         }
 
+        // PUT api/<SongsController>/5
         [HttpPut("{id}")]
-        public void put(string id, [FromBody]Song song)
+        public void Put(int id, [FromBody] string value)
         {
-            int index = songs.FindIndex(song => song.Id == id);
-
-            songs[index] = song;
         }
 
+        // DELETE api/<SongsController>/5
         [HttpDelete("{id}")]
-        public void delete(string id)
+        public void Delete(int id)
         {
-            int index = songs.FindIndex(song => song.Id == id);
-            songs.RemoveAt(index);
         }
     }
 }

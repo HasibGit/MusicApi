@@ -18,31 +18,38 @@ namespace MusicApi.Controllers
 
         // GET: api/<SongsController>
         [HttpGet]
-        public IEnumerable<Song> Get()
+        public IActionResult Get()
         {
-            return _dbContext.Songs;
+            return Ok(_dbContext.Songs);
         }
 
         // GET api/<SongsController>/5
         [HttpGet("{id}")]
-        public Song Get(string id)
+        public IActionResult Get(string id)
         {
-            Song song = _dbContext.Songs.Find(id);
-            return song;
+            Song? song = _dbContext.Songs.Find(id);
+
+            if (song == null)
+            {
+                return NotFound("Resource not found");
+            }
+
+            return Ok(song);
         }
 
         // POST api/<SongsController>
         [HttpPost]
-        public void Post([FromBody] Song song)
+        public IActionResult Post([FromBody] Song song)
         {
             song.Id = Guid.NewGuid();
             _dbContext.Songs.Add(song);
             _dbContext.SaveChanges();
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         // PUT api/<SongsController>/5
         [HttpPut("{id}")]
-        public void Put(string id, [FromBody] Song songObj)
+        public IActionResult Put(string id, [FromBody] Song songObj)
         {
 
             Guid songId;
@@ -51,19 +58,26 @@ namespace MusicApi.Controllers
                 // Handle invalid Guid format or error
                 // For example, you can return a BadRequest response here.
                 // return BadRequest("Invalid ID format.");
-                return;
+                return BadRequest();
             }
 
             var song = _dbContext.Songs.Find(songId);
+
+            if(song == null)
+            {
+                return NotFound("Resource not found");
+            }
 
             song.Title = songObj.Title;
             song.Language = songObj.Language;
             _dbContext.SaveChanges();
+
+            return Ok("record updated successfully");
         }
 
         // DELETE api/<SongsController>/5
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public IActionResult Delete(string id)
         {
             Guid songId;
             if (!Guid.TryParse(id, out songId))
@@ -71,11 +85,18 @@ namespace MusicApi.Controllers
                 // Handle invalid Guid format or error
                 // For example, you can return a BadRequest response here.
                 // return BadRequest("Invalid ID format.");
-                return;
+                return BadRequest();
             }
             var song = _dbContext.Songs.Find(songId);
+
+            if(song == null)
+            {
+                return NotFound("Resource not found");
+            }
+
             _dbContext.Songs.Remove(song);
             _dbContext.SaveChanges();
+            return Ok("record deleted successfully");
         }
     }
 }

@@ -26,11 +26,11 @@ namespace MusicApi
                 app.UseSwaggerUI();
             }
 
-            using (var scope = app.Services.CreateScope())
+           /* using (var scope = app.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApiDbContext>();
                 dbContext.Database.EnsureCreated();
-            }
+            }*/
 
             app.UseHttpsRedirection();
 

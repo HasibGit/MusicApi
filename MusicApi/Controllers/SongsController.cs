@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MusicApi.Data;
 using MusicApi.Models;
 
@@ -18,16 +19,16 @@ namespace MusicApi.Controllers
 
         // GET: api/<SongsController>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(_dbContext.Songs);
+            return Ok(await _dbContext.Songs.ToListAsync());
         }
 
         // GET api/<SongsController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
-            Song? song = _dbContext.Songs.Find(id);
+            Song? song = await _dbContext.Songs.FindAsync(id);
 
             if (song == null)
             {
@@ -39,17 +40,17 @@ namespace MusicApi.Controllers
 
         // POST api/<SongsController>
         [HttpPost]
-        public IActionResult Post([FromBody] Song song)
+        public async Task<IActionResult> Post([FromBody] Song song)
         {
             song.Id = Guid.NewGuid();
-            _dbContext.Songs.Add(song);
-            _dbContext.SaveChanges();
+            await _dbContext.Songs.AddAsync(song);
+            await _dbContext.SaveChangesAsync();
             return StatusCode(StatusCodes.Status201Created);
         }
 
         // PUT api/<SongsController>/5
         [HttpPut("{id}")]
-        public IActionResult Put(string id, [FromBody] Song songObj)
+        public async Task<IActionResult> Put(string id, [FromBody] Song songObj)
         {
 
             Guid songId;
@@ -61,7 +62,7 @@ namespace MusicApi.Controllers
                 return BadRequest();
             }
 
-            var song = _dbContext.Songs.Find(songId);
+            var song = await _dbContext.Songs.FindAsync(songId);
 
             if(song == null)
             {
@@ -70,14 +71,14 @@ namespace MusicApi.Controllers
 
             song.Title = songObj.Title;
             song.Language = songObj.Language;
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return Ok("record updated successfully");
         }
 
         // DELETE api/<SongsController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             Guid songId;
             if (!Guid.TryParse(id, out songId))
@@ -87,7 +88,7 @@ namespace MusicApi.Controllers
                 // return BadRequest("Invalid ID format.");
                 return BadRequest();
             }
-            var song = _dbContext.Songs.Find(songId);
+            var song = await _dbContext.Songs.FindAsync(songId);
 
             if(song == null)
             {
@@ -95,7 +96,7 @@ namespace MusicApi.Controllers
             }
 
             _dbContext.Songs.Remove(song);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return Ok("record deleted successfully");
         }
     }

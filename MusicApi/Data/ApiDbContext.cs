@@ -20,14 +20,16 @@ namespace MusicApi.Data
                          Id = Guid.NewGuid(),
                          Title = "Willow",
                          Language = "English",
-                         Duration = "4:36"
+                         Duration = "4:36",
+                         ImageId = "test"
                      },
                      new Song
                      {
                          Id =  Guid.NewGuid(),
                          Title = "In The End",
                          Language = "English",
-                         Duration = "3:20"
+                         Duration = "3:20",
+                         ImageId = "test"
                      }
                 );
         }

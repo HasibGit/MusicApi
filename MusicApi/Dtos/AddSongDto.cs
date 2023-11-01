@@ -1,15 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MusicApi.Models
+namespace MusicApi.Dtos
 {
-    public class Song
+    public class AddSongDto
     {
-        public Guid Id { get; set; }
         public string Title { get; set; }
         public string Language { get; set; }
         public string Duration { get; set; }
-        [NotMapped]
         public IFormFile Image { get; set; }
-        public string ImageId { get; set; }
     }
 }

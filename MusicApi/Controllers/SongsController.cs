@@ -28,7 +28,12 @@ namespace MusicApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            Song? song = await _dbContext.Songs.FindAsync(id);
+            if (!Guid.TryParse(id, out Guid guidId))
+            {
+                return BadRequest("Invalid ID format");
+            }
+
+            Song? song = await _dbContext.Songs.FindAsync(guidId);
 
             if (song == null)
             {

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MusicApi.Data;
 using MusicApi.Dtos;
+using MusicApi.Helpers;
 using MusicApi.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -58,7 +59,7 @@ namespace MusicApi.Controllers
                 Image = songDto.Image
             };
 
-            song.ImageId = await WriteFile(song.Image);
+            song.ImageId = await FileHelper.UploadFile(song.Image);
 
             if (string.IsNullOrEmpty(song.ImageId))
             {
@@ -68,42 +69,6 @@ namespace MusicApi.Controllers
             await _dbContext.Songs.AddAsync(song);
             await _dbContext.SaveChangesAsync();
             return StatusCode(StatusCodes.Status201Created);
-        }
-
-        private async Task<string> WriteFile(IFormFile file)
-        {
-            string fileName = "";
-            string fileId = "";
-            try
-            {
-                var extension = "." + file.FileName.Split(".")[file.FileName.Split(".").Length - 1];
-                fileName = Guid.NewGuid().ToString() + extension;
-
-                fileId = fileName.Substring(0, fileName.Length - extension.Length);
-
-                var rootDirectory = Directory.GetCurrentDirectory();
-                var filePath = Path.Combine(rootDirectory, "Upload\\Files");
-
-                if (!Directory.Exists(filePath))
-                {
-                    Directory.CreateDirectory(filePath);
-                    Console.WriteLine("Directory created successfully");
-                }
-
-                var exactPath = Path.Combine(filePath, fileName);
-
-                using (var stream = new FileStream(exactPath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-
-                    return fileId;
-                }
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return fileId;
-            }
         }
 
         // PUT api/<SongsController>/5

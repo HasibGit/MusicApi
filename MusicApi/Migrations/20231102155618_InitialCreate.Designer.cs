@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MusicApi.Data;
 
@@ -11,9 +12,11 @@ using MusicApi.Data;
 namespace MusicApi.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    partial class ApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231102155618_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,7 +31,11 @@ namespace MusicApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ArtistId")
+                    b.Property<string>("ArtistId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ArtistId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CoverImageId")
@@ -41,7 +48,7 @@ namespace MusicApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ArtistId");
+                    b.HasIndex("ArtistId1");
 
                     b.ToTable("Albums");
                 });
@@ -75,10 +82,17 @@ namespace MusicApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AlbumId")
+                    b.Property<string>("AlbumId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("AlbumId1")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ArtistId")
+                    b.Property<string>("ArtistId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ArtistId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AudioFileId")
@@ -105,9 +119,9 @@ namespace MusicApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlbumId");
+                    b.HasIndex("AlbumId1");
 
-                    b.HasIndex("ArtistId");
+                    b.HasIndex("ArtistId1");
 
                     b.ToTable("Songs");
                 });
@@ -116,22 +130,18 @@ namespace MusicApi.Migrations
                 {
                     b.HasOne("MusicApi.Models.Artist", null)
                         .WithMany("Albums")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ArtistId1");
                 });
 
             modelBuilder.Entity("MusicApi.Models.Song", b =>
                 {
                     b.HasOne("MusicApi.Models.Album", null)
                         .WithMany("Songs")
-                        .HasForeignKey("AlbumId");
+                        .HasForeignKey("AlbumId1");
 
                     b.HasOne("MusicApi.Models.Artist", null)
                         .WithMany("Songs")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ArtistId1");
                 });
 
             modelBuilder.Entity("MusicApi.Models.Album", b =>

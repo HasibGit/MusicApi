@@ -1,4 +1,7 @@
-﻿namespace MusicApi.Helpers
+﻿using Microsoft.AspNetCore.Mvc;
+using MimeKit;
+
+namespace MusicApi.Helpers
 {
     public static class FileHelper
     {
@@ -36,6 +39,25 @@
                 Console.WriteLine(ex.Message);
                 return fileId;
             }
+        }
+
+        public static async Task<byte[]> GetImageByImageIdAsync(string fileId)
+        {
+            var rootDirectory = Directory.GetCurrentDirectory();
+            string[] possibleExtensions = new string[] { "png", "jpg", "jpeg" };
+
+            foreach (var extension in possibleExtensions)
+            {
+                var filePath = Path.Combine(rootDirectory, "Upload\\Files", $"{fileId}.{extension}");
+
+                if (File.Exists(filePath))
+                {
+                    return await System.IO.File.ReadAllBytesAsync(filePath);
+                }
+            }
+
+            // Return null or an empty byte array if file not found
+            return null;
         }
     }
 }

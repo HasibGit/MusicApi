@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MusicApi.Data;
 using MusicApi.Dtos;
 using MusicApi.Helpers;
@@ -39,6 +40,14 @@ namespace MusicApi.Controllers
             await _dbContext.Albums.AddAsync(album);
             await _dbContext.SaveChangesAsync();
             return StatusCode(StatusCodes.Status201Created);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var albums = await _dbContext.Albums.Select(x => new { x.Id, x.Name, x.CoverImageId }).ToListAsync();
+
+            return Ok(albums);
         }
     }
 }

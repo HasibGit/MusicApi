@@ -59,5 +59,24 @@ namespace MusicApi.Helpers
             // Return null or an empty byte array if file not found
             return null;
         }
+
+        public static async Task<byte[]> GetAudioByFileIdAsync(string fileId)
+        {
+            var rootDirectory = Directory.GetCurrentDirectory();
+            string[] possibleExtensions = new string[] { "mp3" };
+
+            foreach (var extension in possibleExtensions)
+            {
+                var filePath = Path.Combine(rootDirectory, "Upload\\Files", $"{fileId}.{extension}");
+
+                if (File.Exists(filePath))
+                {
+                    return await System.IO.File.ReadAllBytesAsync(filePath);
+                }
+            }
+
+            // Return null or an empty byte array if file not found
+            return null;
+        }
     }
 }

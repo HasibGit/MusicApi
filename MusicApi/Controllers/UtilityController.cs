@@ -14,5 +14,12 @@ namespace MusicApi.Controllers
             var image = await FileHelper.GetImageByImageIdAsync(imageId);
             return Ok(image);
         }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetAudio(string fileId)
+        {
+            var file = await FileHelper.GetAudioByFileIdAsync(fileId);
+            return Ok(file);
+        }
     }
 }

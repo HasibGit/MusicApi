@@ -49,5 +49,12 @@ namespace MusicApi.Controllers
 
             return Ok(albums);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAlbumDetails(Guid albumId)
+        {
+            var albumDetails = await _dbContext.Albums.Where(x => x.Id == albumId).Include(x => x.Songs).SingleOrDefaultAsync();
+            return Ok(albumDetails);
+        }
     }
 }

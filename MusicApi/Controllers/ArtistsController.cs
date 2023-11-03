@@ -42,16 +42,22 @@ namespace MusicApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetArtists()
         {
-            var artists = await _dbContext.Artists.ToListAsync();
-
-            var artistsWithImages = await Task.WhenAll(artists.Select(async x => new
+            var artists = await _dbContext.Artists.Select(x => new
             {
-                Id = x.Id,
-                Name = x.Name,
-                ProfilePicture = await FileHelper.GetImageByImageIdAsync(x.ProfileImageId)
-            }));
+               x.Id,
+               x.Name,
+               x.ProfileImageId
+            }) .ToListAsync();
 
-            return Ok(artistsWithImages);
+            return Ok(artists);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetArtistDetails(Guid artistId)
+        {
+            var artistDetails = await _dbContext.Artists.Where(x => x.Id == artistId).Include(x => x.Songs).FirstOrDefaultAsync();
+
+            return Ok(artistDetails);
         }
     }
 }

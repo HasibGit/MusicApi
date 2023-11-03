@@ -6,12 +6,12 @@ using MusicApi.Models;
 
 namespace MusicApi.Controllers
 {
-    [Route("api/[controller]s")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class ArtistController : ControllerBase
+    public class ArtistsController : ControllerBase
     {
         private readonly ApiDbContext _dbContext;
-        public ArtistController(ApiDbContext dbContext) 
+        public ArtistsController(ApiDbContext dbContext) 
         {
             _dbContext = dbContext;
         }

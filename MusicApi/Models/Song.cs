@@ -8,7 +8,7 @@ namespace MusicApi.Models
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Duration { get; set; }
-        public DateTime UploadedDate { get; set; }
+        public DateTime UploadDate { get; set; }
         public bool IsFeatured { get; set; }
         [NotMapped]
         public IFormFile Image { get; set; }

@@ -49,7 +49,7 @@ namespace MusicApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int pageNumber = 0, int pageSize = 5)
         {
             var songs = await _dbContext.Songs.Select(
                                     x => new { 
@@ -58,7 +58,7 @@ namespace MusicApi.Controllers
                                         x.Duration, 
                                         x.ImageId, 
                                         x.AudioFileId 
-                                    }).ToListAsync();
+                                    }).Skip(pageNumber * pageSize).Take(pageSize).ToListAsync();
             return Ok(songs);
         }
 

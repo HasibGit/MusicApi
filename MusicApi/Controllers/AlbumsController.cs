@@ -43,9 +43,13 @@ namespace MusicApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int pageNumber = 0, int pageSize = 5)
         {
-            var albums = await _dbContext.Albums.Select(x => new { x.Id, x.Name, x.CoverImageId }).ToListAsync();
+            var albums = await _dbContext.Albums
+                .Select(x => new { x.Id, x.Name, x.CoverImageId })
+                .Skip(pageNumber * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
             return Ok(albums);
         }

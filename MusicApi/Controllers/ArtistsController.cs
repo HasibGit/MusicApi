@@ -40,14 +40,14 @@ namespace MusicApi.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
         [HttpGet]
-        public async Task<IActionResult> GetArtists()
+        public async Task<IActionResult> GetArtists(int pageNumber = 0, int pageSize = 5)
         {
             var artists = await _dbContext.Artists.Select(x => new
             {
                x.Id,
                x.Name,
                x.ProfileImageId
-            }) .ToListAsync();
+            }).Skip(pageNumber * pageSize).Take(pageSize).ToListAsync();
 
             return Ok(artists);
         }

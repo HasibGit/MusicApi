@@ -59,5 +59,6 @@ namespace MusicApi.Controllers
 
             return Ok(artistDetails);
         }
+       
     }
 }

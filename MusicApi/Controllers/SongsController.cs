@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MusicApi.Data;
 using MusicApi.Dtos;
 using MusicApi.Helpers;
@@ -45,6 +46,52 @@ namespace MusicApi.Controllers
             await _dbContext.Songs.AddAsync(song);
             await _dbContext.SaveChangesAsync();
             return StatusCode(StatusCodes.Status201Created);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var songs = await _dbContext.Songs.Select(
+                                    x => new { 
+                                        x.Id, 
+                                        x.Title, 
+                                        x.Duration, 
+                                        x.ImageId, 
+                                        x.AudioFileId 
+                                    }).ToListAsync();
+            return Ok(songs);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> FeaturedSongs()
+        {
+            var featuredSongs = await _dbContext.Songs
+                .Where(x => x.IsFeatured == true)
+                .Select(x => new {x.Id, x.Title, x.Duration, x.ImageId, x.AudioFileId})
+                .ToListAsync();
+            return Ok(featuredSongs);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> NewSongs()
+        {
+            var newSongs = await _dbContext.Songs
+                .OrderBy(x => x.UploadDate)
+                .Select(x => new { x.Id, x.Title, x.Duration, x.ImageId, x.AudioFileId })
+                .Take(15)
+                .ToListAsync();
+            return Ok(newSongs);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> SearchSongs(string searchKey)
+        {
+            var result = await _dbContext.Songs
+                .Where(x => x.Title.ToLower().Contains(searchKey.ToLower()))
+                .OrderBy(x => x.UploadDate)
+                .Select(x => new { x.Id, x.Title, x.Duration, x.ImageId, x.AudioFileId })
+                .ToListAsync();
+            return Ok(result);
         }
     }
 }
